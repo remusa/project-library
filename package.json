@@ -5,6 +5,7 @@
 	"main": "server.js",
 	"scripts": {
 		"start": "node server.js",
+		"nodemon": "nodemon server.js",
 		"dev": "export NODE_ENV='test' && export PORT=3000 && nodemon server.js",
 		"dev-w": "$env:NODE_ENV=\"test\" & $env:PORT=3000 & nodemon server.js"
 	},
