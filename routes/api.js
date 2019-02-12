@@ -105,11 +105,10 @@ module.exports = function(app) {
 
             //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
             MongoClient.connect(MONGODB_CONNECTION_STRING, (err, db) => {
-                db.collection('books').findOne(
-                    { _id: ObjectId(bookid) },
+                db.collection('books').findOne({_id: ObjectId(bookid)},
                     (err, docs) => {
                         if (err) {
-                            db.close()
+                            //db.close()
                             return res
                                 .status(400)
                                 .type('text')
@@ -125,6 +124,7 @@ module.exports = function(app) {
                         }
 
                         db.close()
+                        return res
                     }
                 )
             })
