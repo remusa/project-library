@@ -25,9 +25,7 @@ suite('Functional Tests', function() {
             .get('/api/books')
             .end(function(err, res) {
                 assert.equal(res.status, 200)
-
                 assert.isArray(res.body, 'response should be an array')
-
                 assert.property(
                     res.body[0],
                     'commentcount',
@@ -43,7 +41,6 @@ suite('Functional Tests', function() {
                     '_id',
                     'Books in array should contain _id'
                 )
-
                 done()
             })
     })
@@ -52,10 +49,12 @@ suite('Functional Tests', function() {
      */
 
     suite('Routing tests', function() {
-        suite(
+        
+      suite(
             'POST /api/books with title => create book object/expect book object',
             function() {
-                test('Test POST /api/books with title', function(done) {
+                
+              test('Test POST /api/books with title', function(done) {
                     chai.request(server)
                         .post('/api/books')
                         .send({
@@ -63,6 +62,7 @@ suite('Functional Tests', function() {
                         })
                         .end((err, res) => {
                             assert.equal(res.status, 200)
+                            id = res.body._id
                             assert.isObject(
                                 res.body,
                                 'response should be an object'
@@ -82,12 +82,11 @@ suite('Functional Tests', function() {
                                 'comments property is an array'
                             )
                             assert.equal(res.body.title, 'My test title')
-                            id = res.body._id
                             done()
                         })
                 })
 
-                test('Test POST /api/books with no title given', function(done) {
+              test('Test POST /api/books with no title given', function(done) {
                     chai.request(server)
                         .post('/api/books')
                         .send({
@@ -99,11 +98,13 @@ suite('Functional Tests', function() {
                             done()
                         })
                 })
+            
             }
         )
 
         suite('GET /api/books => array of books', function() {
-            test('Test GET /api/books', function(done) {
+            
+          test('Test GET /api/books', function(done) {
                 chai.request(server)
                     .get('/api/books')
                     .end((err, res) => {
@@ -127,10 +128,12 @@ suite('Functional Tests', function() {
                         done()
                     })
             })
+          
         })
 
         suite('GET /api/books/[id] => book object with [id]', function() {
-            test('Test GET /api/books/[id] with id not in db', function(done) {
+            
+          test('Test GET /api/books/[id] with id not in db', function(done) {
                 chai.request(server)
                     .get('/api/books/:id')
                     .query({ _id: 666 })
@@ -144,73 +147,44 @@ suite('Functional Tests', function() {
                     })
             })
 
-            test('Test GET /api/books/[id] with valid id in db', function(done) {
+          test('Test GET /api/books/[id] with valid id in db', function(done) {
                 chai.request(server)
-                    .get(`api/books/${id}`)
+                    .get('/api/books/' + id)
                     .end((err, res) => {
                         assert.equal(res.status, 200)
-                        assert.isObject(
-                            res.body,
-                            'response should be an object'
-                        )
-                        assert.property(
-                            res.body,
-                            '_id',
-                            'book should contain _id'
-                        )
-                        assert.property(
-                            res.body,
-                            'title',
-                            'book should contain title'
-                        )
-                        assert.property(
-                            res.body,
-                            'comments',
-                            'book should contain comments'
-                        )
-                        assert.equal(res.body_id, id)
+                        //assert.isObject(res.body,'response should be an object')
+                        assert.property(res.body, '_id', 'book should contain _id')
+                        assert.property(res.body, 'title', 'book should contain title')
+                        assert.property(res.body, 'comments', 'book should contain comments')
+                        assert.isArray(res.body.comments, 'comments should be an array')
+                        assert.equal(res.body._id, id)
                         done()
                     })
             })
+        
         })
 
         suite(
             'POST /api/books/[id] => add comment/expect book object with id',
             function() {
-                test('Test POST /api/books/[id] with comment', function(done) {
+                
+              test('Test POST /api/books/[id] with comment', function(done) {
                     chai.request(server)
-                        // .post(`api/books/${id}`)
-                        .post(`api/books/5c5f26fa87ecdb1ae0f39788`)
-                        .send({
-                            comment: 'a test comment',
-                        })
+                        .post('/api/books/' + id)
+                        .send({ comment: 'a test comment' })
                         .end((err, res) => {
                             assert.equal(res.status, 200)
-                            assert.property(
-                                res.body,
-                                '_id',
-                                'book should contain _id'
-                            )
-                            assert.property(
-                                res.body,
-                                'title',
-                                'book should contain title'
-                            )
-                            assert.property(
-                                res.body,
-                                'comments',
-                                'book should contain comments array'
-                            )
-                            // assert.equal(res.body._id, id)
-                            assert.equal(
-                                res.body._id,
-                                '5c5f26fa87ecdb1ae0f39788'
-                            )
+                            assert.property(res.body, '_id', 'book should contain _id')
+                            assert.property(res.body, 'title', 'book should contain title')
+                            assert.property(res.body, 'comments', 'book should contain comments')
+                            assert.isArray(res.body.comments, 'comments should be an array')
+                            assert.equal(res.body._id, id)
                             assert.equal(res.body.title, 'My test title')
-                            assert.equal(res.body.comment, 'a test comment')
+                            assert.equal(res.body.comments[0], 'a test comment')
                             done()
                         })
                 })
+            
             }
         )
     })
